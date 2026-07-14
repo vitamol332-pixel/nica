@@ -1,0 +1,82 @@
+window.DigitalFeedback['https://cdn.horizons.confirmit.eu/loader/prod/scenario?programKey=a6fVkS&scenarioId=552&programVersion=94'] = function (api) {
+(function(){
+    var ctx = api();
+    function getVal(x) { if (x instanceof Function) { return x(); } return x; }
+ 
+    function userfunc196(ctx, Hostlist, showConsoleLog) {
+const SURVEY_ID = "p559572319158";
+const CONTAINER = "ManualSurveyContainer";
+const VERSION = "260320";
+const PROGRAM_ID = "142/196";
+const KIND = "manual";
+let showLog = false;
+
+window.PGForsta = window.PGForsta || api();
+
+function getEventTemplate(event) {
+    const [actor, action, object] = event.split(".");
+    return {
+        event: event || "-",
+        [actor]: {
+            [action]: {
+                [object]: {
+                    type: "pgforsta",
+                    code: SURVEY_ID,
+                    kind: KIND,
+                    version: PROGRAM_ID + "-" + VERSION
+                }
+            }
+        }
+    };
+}
+
+PGForsta.manualSurvey = function (params) {
+    const ctx = api();
+    const attributes = ForstaHelper.attributes()
+    Object.assign(attributes, params);
+    attributes.programId = PROGRAM_ID;
+
+    showLog = attributes.env === "test";
+
+    PGForsta.surveyCompleted = false;
+
+    function surveyMessageListener(event) {
+        if (event?.data?.type === "survey-completed") {
+            PGForsta.surveyCompleted = true;
+        }
+    }
+
+    window.addEventListener("message", surveyMessageListener);
+
+    ctx.container(CONTAINER);
+    ctx.survey(SURVEY_ID);
+    ctx.data(attributes)
+    ctx.show();
+
+    ctx.events.showContainer.on(
+        function () {
+            const adlEvent = getEventTemplate("user.view.survey");
+            ForstaHelper.adlPush(adlEvent);
+            ForstaHelper.ForstaLog(showLog, ForstaHelper.logString(VERSION) + " showContainer " + CONTAINER + " " + JSON.stringify(attributes));
+        });
+    ctx.events.closeContainer.on(
+        function () {
+            window.removeEventListener("message", surveyMessageListener);
+            const adlEvent = getEventTemplate(PGForsta.surveyCompleted ? "user.complete.survey" : "user.close.survey");
+            ForstaHelper.adlPush(adlEvent);
+            ForstaHelper.ForstaLog(showLog, ForstaHelper.logString(VERSION) + " closeContainer " + CONTAINER + " " + JSON.stringify(attributes));
+        });
+    ctx.events.completeSurvey.on(
+        function () {
+            const adlEvent = getEventTemplate("user.complete.survey");
+            ForstaHelper.adlPush(adlEvent);
+            ForstaHelper.ForstaLog(showLog, ForstaHelper.logString(VERSION) + " completeSurvey " + CONTAINER + " " + JSON.stringify(attributes));
+        });
+}
+}
+
+
+
+    userfunc196(ctx, {"Client Test 1":"www.dfe-01.test.alltlab.com","Client Test 2":"www.dfe-02.test.alltlab.com","Client Test 4":"www.dfe-04.test.alltlab.com","Client Test 5":"www.dfe-05.test.alltlab.com","Client Test 6":"www.dfe-06.test.alltlab.com","Client Test 7":"www.dfe-07.test.alltlab.com","Client Dev 1":"www.dfe-01.dev.alltlab.com","Example site":"example.com","FORSTA TEST":"demo.forsta.com","Client AWS Test 1":"www.dfe-01.aws.allwynuk.com","Local Host":"localhost:5173"}, true)
+})();
+};

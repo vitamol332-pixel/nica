@@ -1,0 +1,15 @@
+window.DigitalFeedback['https://cdn.horizons.confirmit.eu/loader/prod/scenario?programKey=a6fVkS&scenarioId=516&programVersion=94'] = function (api) {
+window.PGForsta = window.PGForsta || api();
+
+window.ForstaHelper={
+	ForstaLog:function(show,string){if(show){console.log("F: "+string);}},
+	setCookie:function(b,c,a){const parts=[encodeURIComponent(b)+"="+encodeURIComponent(c)];if(a){if("expiry"in a){if(typeof a.expiry==="number"){a.expiry=new Date(1000*a.expiry+ +new Date());}parts.push("expires="+a.expiry.toGMTString());}if("domain"in a)parts.push("domain="+a.domain);if("path"in a)parts.push("path="+a.path);if("secure"in a&&a.secure)parts.push("secure");if("samesite"in a)parts.push("SameSite="+a.samesite);}document.cookie=parts.join("; ");},
+	getCookie:function(b,c){const result=[];const cookies=document.cookie.split(/; */);for(let i=0;i<cookies.length;i++){const parts=cookies[i].split("=");if(parts[0]===encodeURIComponent(b)){result.push(decodeURIComponent(parts[1].replace(/\+/g,"%20")));}}return c?result:result[0];},
+	clearCookie:function(b){ConfirmitHelper.setCookie(b,"",{path:"/",expiry:-86400,secure:true,samesite:"None"});},
+	getDTS:function(){const myDate=new Date();const ms=myDate.getMilliseconds();return myDate.toLocaleString()+" / "+ms;},
+	logString:function(logVersion){const logString=" "+logVersion+" "+ForstaHelper.getDTS()+" : ";return logString;},
+	adlPush:function(data){Array.isArray(window.adl)?window.adl.push(data):(window.adl=[data]);},
+	getScreen: function (events) { for (let i = events && events.length - 1; i >= 0; i--)if (events[i] && events[i].event === "screen" && events[i].screen) return events[i].screen; return null; },
+	attributes:function(){const ua=navigator.userAgent,hostname=location.hostname,url=location.origin+location.pathname,env=(hostname==="national-lottery.co.uk"||hostname.endsWith(".national-lottery.co.uk"))?"prod":"test",device=/mobile|iphone|ipod|android.*mobile|windows phone/i.test(ua)?"mobile":(/ipad|tablet|android(?!.*mobile)/i.test(ua)?"tablet":"desktop"),os=/windows/i.test(ua)?"windows":/android/i.test(ua)?"android":/iphone|ipad|ipod/i.test(ua)?"ios":/mac os x/i.test(ua)?"macos":/linux/i.test(ua)?"linux":"unknown",browser=/edg\//i.test(ua)?"edge":(/opr\//i.test(ua)||/opera/i.test(ua)?"opera":/chrome\//i.test(ua)&&!/edg\//i.test(ua)?"chrome":/safari\//i.test(ua)&&!/chrome\//i.test(ua)?"safari":/firefox\//i.test(ua)?"firefox":"unknown"),screen=ForstaHelper.getScreen(window.adl||[]);return{url,env,isMobile:device==="mobile"?"true":"false",device,os,browser,pageName:screen?.name||null,playerId:(()=>{try{return/^\d+$/.test(localStorage.getItem("OL_Tracking_ID"))?localStorage.getItem("OL_Tracking_ID"):"-"}catch(e){return"-";}})(),deviceId:(()=>{try{return(window.nladl&&nladl.clientId?String(nladl.clientId).toUpperCase():"-");}catch(e){return"-";}})()}}
+}
+};
